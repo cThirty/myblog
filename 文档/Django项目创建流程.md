@@ -51,7 +51,14 @@ TEMPLATES = [
 #### 6.2. 配置数据库(settings.py 默认sqlite)
 
 ```python
-pass
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {
+            'read_default_file': '/path/to/my.cnf',
+        },
+    }
+}
 ```
 
 ## 常用

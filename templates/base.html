@@ -1,0 +1,105 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'bootstrap-4.5.0-dist\css\bootstrap.min.css' %}">
+    <script src="{% static 'jquery-3.5.1-dist\jquery-3.5.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap-4.5.0-dist\js\bootstrap.bundle.min.js' %}"></script>
+    {% block header_extends %}{% endblock %}
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top navbar-light shadow-sm bg-white">
+        <a href="{% url 'home' %}" class="navbar-brand">个人博客Logo</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item {% block navbar-blog-active %}{% endblock %}">
+                    <a class="nav-link" href="">博客</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item btn-group">
+                    <button type="button" class="btn btn-danger">{{ user.username }}{% if user.has_nickname %}({{ user.get_nickname }}){% endif %}</button>
+                    <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split"
+                        data-toggle="dropdown">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        {% if user.is_staff or user.is_superuser %}
+                        <li><a class="dropdown-item" href="{% url 'admin:index' %}">后台管理</a></li>
+                        {% endif %}
+                        <li class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'user:user_info' %}">个人中心</a></li>
+                        <li class="dropdown-divider"></li>
+                        <li><a class="dropdown-item"
+                                href="{% url 'user:logout' %}?from={{ request.get_full_path }}">退出</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user:change_password' %}?from={{ request.get_full_path }}">修改密码</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'user:login' %}?from={{ request.get_full_path }}" class="nav-link">登录</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'user:register' %}?from={{ request.get_full_path }}" class="nav-link">注册</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    {% block content %}{% endblock %}
+    
+    <!-- Modal -->
+    <div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <form id="login_modal_form" action="" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title">登录</h5>
+                    </div>
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        {% for field in login_form %}
+                        <label class="mt-1" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% endfor %}
+                        <span id="login_modal_tip" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">登录</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $("#login_modal_form").submit(function (event) {
+            event.preventDefault();
+            $.ajax({
+                url: "",
+                type: 'POST',
+                data: $(this).serialize(),
+                cache: false,
+                success: function (data) {
+                    if (data['status'] == 'SUCCESS') {
+                        window.location.reload();
+                    } else {
+                        $('#login_modal_tip').text('用户名或密码不正确');
+                    }
+                }
+            });
+        })
+    </script>
+    {% block script_extends %}{% endblock %}
+</body>
+
+</html>

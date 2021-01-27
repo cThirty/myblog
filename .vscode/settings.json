@@ -1,0 +1,12 @@
+{
+    "files.autoSave": "onFocusChange",
+    "editor.fontSize": 15,
+    // "python.linting.pylintArgs": [
+    //     "--load-plugins=pylint_django"
+    // ],
+    "open-in-browser.default": "edge",
+    "editor.suggest.showStatusBar": true,
+    "editor.suggest.insertMode": "replace",
+    "html.validate.scripts": false,
+    "search.collapseResults": "alwaysCollapse",
+}
